@@ -15,7 +15,7 @@ Proyecto del equipo 6
     library(shinydashboard)
     library(fontawesome)
 
-#### Seleccionamis el directorio de trabajo en donde se almacenan los datos del archivo match.data.cvs
+#### Seleccionamos el directorio de trabajo en donde se almacenan los datos del archivo match.data.cvs
     setwd("~/Desktop/Proyecto/datos")
     getwd()
     match.data <- read.csv("match.data.csv")
