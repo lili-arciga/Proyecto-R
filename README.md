@@ -1092,4 +1092,4 @@ Si hacemos las t test de una cola podemos ver que hay significancia, incluso si 
 
     shinyApp(ui, server)
 
-##### El enlace para acceder al dashboard se encuentra en el siguiente link: https://qh8b71-liliana0in0s-arciga0moreno.shinyapps.io/ProyectoEquipo06/?_ga=2.114321295.92823842.1661032228-591125681.1661032228
+##### Haz clic [aquí](https://qh8b71-liliana0in0s-arciga0moreno.shinyapps.io/ProyectoEquipo06/?_ga=2.114321295.92823842.1661032228-591125681.1661032228) para acceder al enlace donde se encuentra el dashboard.
