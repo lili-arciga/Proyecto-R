@@ -10,6 +10,683 @@ Proyecto del equipo 6
 
 ## Elaboración de los heatmaps
 
+#### Importamos las bibliotecas requeridas
+
+        library(lattice)
+        library(dplyr)
+        library(ggplot2)
+
+#### Fijamos el directorio de trabajo donde tenemos nuestros datos
+
+        setwd('d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/datos')
+        dir()
+
+#### Extraemos la información necesaria de los archivos
+
+        lista <-lapply(dir(), read.csv)
+        lista <- lapply(lista, mutate, Date = as.Date(Date, format = "%d/%m/%y")) 
+        lista <- lapply(lista, select, Date:FTAG)
+
+        T1011 <- lista[[1]]
+        T1112 <- lista[[2]]
+        T1213 <- lista[[3]]
+        T1314 <- lista[[4]]
+        T1415 <- lista[[5]]
+        T1516 <- lista[[6]]
+        T1617 <- lista[[7]]
+        T1718 <- lista[[8]]
+        T1819 <- lista[[9]]
+        T1920 <- lista[[10]]
+
+# CREAMOS LA TABLA DE CONTINGENCIA PARA TEMPORADA
+  
+  # Primero creamos la tabla de probabilidades conjuntas
+
+goles.local <- T1011$FTHG
+goles.visitante <- T1011$FTAG 
+tabla <- table(goles.local,goles.visitante)
+total.goles <- sum(tabla)
+tabla <- round(tabla/total.goles,5)
+
+  # Agregamos las probabilidades marginales de ambas columnas
+
+marginal.gl <- marginSums(tabla,1)
+
+tabla <- cbind(tabla,marginal.gl)
+
+marginal.gv <- marginSums(tabla,2)
+
+tabla <- rbind(tabla,marginal.gv)
+
+# GRAFICAMOS LAS PROBABILIDADES MARGINALES
+  
+  # Probabilidad de anotar del equipo de casa 
+
+n = dim(tabla)[1] ; m = dim(tabla)[2]
+goles <- row.names(tabla)[1:n-1]
+prob <- marginal.gl
+df<-as.data.frame(cbind(goles,prob))
+
+  #Guardamos la imagen
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/bpgl1011.jpeg", width = 550, height = 450)
+ggplot(df,aes(row.names(df),marginal.gl))+geom_col(fill='blue')+
+  xlab('Goles') + ylab('Probabilidad de anotar')+
+  ggtitle('Local') + 
+  theme(plot.title = element_text(hjust = 0.5, size=20))
+dev.off()
+  
+  # Probabilidad de anotar del equipo visitante
+
+goles <- colnames(tabla)[1:m-1]
+prob <- marginal.gv[1:m-1]
+df <- as.data.frame(cbind(goles,prob))
+
+  #Guardamos la imagen
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/bpgv1011.jpeg", width = 550, height = 450)
+ggplot(df)+geom_col(aes(goles,prob), fill='red')+
+  xlab('Goles') + ylab('Probabilidad de anotar')+
+  ggtitle('Visitante') + 
+  theme(plot.title = element_text(hjust = 0.5, size=20))
+dev.off()
+  
+  
+# GRAFICAMOS EL MAPA DE CALOR
+
+color <- colorRampPalette(c('black','limegreen'))
+color <-color(20)
+
+  #Guardamos la imagen
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/hm10-11.jpeg", width = 550, height = 450)
+levelplot(tabla[1:n-1,1:m-1]*100,col.regions= color,
+          main='Probabilidad del resultado final',
+          xlab='Goles local', ylab='Goles visitante')
+grid::grid.text('(%)', y=unit(0.92, "npc"), 
+                x=unit(0.89, "npc"))
+dev.off()
+
+
+# SE REPITE EL PROCESO PARA CADA TEMPORADA
+
+
+##################################################################
+
+# CREAMOS LA TABLA DE CONTINGENCIA PARA TEMPORADA
+
+  # Primero creamos la tabla de probabilidades conjuntas
+
+
+goles.local <- T1112$FTHG
+goles.visitante <- T1112$FTAG 
+tabla <- table(goles.local,goles.visitante)
+total.goles <- sum(tabla)
+tabla <- round(tabla/total.goles,5)
+
+  # Agregamos las probabilidades marginales de ambas variables
+
+marginal.gl <- marginSums(tabla,1)
+
+tabla <- cbind(tabla,marginal.gl)
+
+marginal.gv <- marginSums(tabla,2)
+
+tabla <- rbind(tabla,marginal.gv)
+
+# GRAFICAMOS LAS PROBABILIDADES MARGINALES
+
+  # Probabilidad de anotar del equipo de casa 
+
+n = dim(tabla)[1] ; m = dim(tabla)[2]
+goles <- row.names(tabla)[1:n-1]
+prob <- marginal.gl
+df<-as.data.frame(cbind(goles,prob))
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/bpgl1112.jpeg",width = 550, height = 450)
+ggplot(df,aes(goles,prob))+geom_col(fill='blue')+
+  xlab('Goles') + ylab('Probabilidad de anotar')+
+  ggtitle('Local') + 
+  theme(plot.title = element_text(hjust = 0.5, size=20))
+dev.off()
+
+  # Probabilidad de anotar del equipo visitante
+
+goles <- colnames(tabla)[1:m-1]
+prob <- marginal.gv[1:m-1]
+df <- as.data.frame(cbind(goles,prob))
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/bpgv1112.jpeg",width = 550, height = 450)
+ggplot(df)+geom_col(aes(goles,prob), fill='red')+
+  xlab('Goles') + ylab('Probabilidad de anotar')+
+  ggtitle('Visitante') + 
+  theme(plot.title = element_text(hjust = 0.5, size=20))
+dev.off()
+
+
+# GRAFICAMOS EL MAPA DE CALOR
+
+color <- colorRampPalette(c('black','limegreen'))
+color <-color(20)
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/hm11-12.jpeg",width = 550, height = 450)
+levelplot(tabla[1:n-1,1:m-1]*100,col.regions= color,
+          main='Probabilidad del resultado final',
+          xlab='Goles local', ylab='Goles visitante')
+grid::grid.text('(%)', y=unit(0.92, "npc"), 
+                x=unit(0.89, "npc"))
+dev.off()
+
+
+###################################################################  
+
+# CREAMOS LA TABLA DE CONTINGENCIA PARA TEMPORADA
+
+  # Primero creamos la tabla de probabilidades conjuntas
+
+goles.local <- T1213$FTHG
+goles.visitante <- T1213$FTAG 
+tabla <- table(goles.local,goles.visitante)
+total.goles <- sum(tabla)
+tabla <- round(tabla/total.goles,5)
+
+  # Agregamos las probabilidades marginales de ambas variables
+
+marginal.gl <- marginSums(tabla,1)
+
+tabla <- cbind(tabla,marginal.gl)
+
+marginal.gv <- marginSums(tabla,2)
+
+tabla <- rbind(tabla,marginal.gv)
+
+# GRAFICAMOS LAS PROBABILIDADES MARGINALES
+
+  # Probabilidad de anotar del equipo de casa 
+
+n = dim(tabla)[1] ; m = dim(tabla)[2]
+goles <- row.names(tabla)[1:n-1]
+prob <- marginal.gl
+df<-as.data.frame(cbind(goles,prob))
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/bpgl1213.jpeg",width = 550, height = 450)
+ggplot(df,aes(goles,prob))+geom_col(fill='blue')+
+  xlab('Goles') + ylab('Probabilidad de anotar')+
+  ggtitle('Local') + 
+  theme(plot.title = element_text(hjust = 0.5, size=20))
+dev.off()
+ 
+   # Probabilidad de anotar del equipo visitante
+
+goles <- colnames(tabla)[1:m-1]
+prob <- marginal.gv[1:m-1]
+df <- as.data.frame(cbind(goles,prob))
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/bpgv1213.jpeg",width = 550, height = 450)
+ggplot(df)+geom_col(aes(goles,prob), fill='red')+
+  xlab('Goles') + ylab('Probabilidad de anotar')+
+  ggtitle('Visitante') + 
+  theme(plot.title = element_text(hjust = 0.5, size=20))
+dev.off()
+
+
+# GRAFICAMOS EL MAPA DE CALOR
+
+color <- colorRampPalette(c('black','limegreen'))
+color <-color(20)
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/hm12-13.jpeg",width = 550, height = 450)
+levelplot(tabla[1:n-1,1:m-1]*100,col.regions= color,
+          main='Probabilidad del resultado final',
+          xlab='Goles local', ylab='Goles visitante')
+grid::grid.text('(%)', y=unit(0.92, "npc"), 
+                x=unit(0.90, "npc"))
+dev.off()
+#############################################################
+  
+# CREAMOS LA TABLA DE CONTINGENCIA PARA TEMPORADA
+
+  # Primero creamos la tabla de probabilidades conjuntas
+
+goles.local <- T1314$FTHG
+goles.visitante <- T1314$FTAG 
+tabla <- table(goles.local,goles.visitante)
+total.goles <- sum(tabla)
+tabla <- round(tabla/total.goles,5)
+
+  # Agregamos las probabilidades marginales de ambas variables
+
+marginal.gl <- marginSums(tabla,1)
+
+tabla <- cbind(tabla,marginal.gl)
+
+marginal.gv <- marginSums(tabla,2)
+
+tabla <- rbind(tabla,marginal.gv)
+
+# GRAFICAMOS LAS PROBABILIDADES MARGINALES
+
+  # Probabilidad de anotar del equipo de casa 
+
+n = dim(tabla)[1] ; m = dim(tabla)[2]
+goles <- row.names(tabla)[1:n-1]
+prob <- marginal.gl
+df<-as.data.frame(cbind(goles,prob))
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/bpgl1314.jpeg",width = 550, height = 450)
+ggplot(df,aes(goles,prob))+geom_col(fill='blue')+
+  xlab('Goles') + ylab('Probabilidad de anotar')+
+  ggtitle('Local') + 
+  theme(plot.title = element_text(hjust = 0.5, size=20))
+dev.off()
+ 
+   # Probabilidad de anotar del equipo visitante
+
+goles <- colnames(tabla)[1:m-1]
+prob <- marginal.gv[1:m-1]
+df <- as.data.frame(cbind(goles,prob))
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/bpgv1314.jpeg",width = 550, height = 450)
+ggplot(df)+geom_col(aes(goles,prob), fill='red')+
+  xlab('Goles') + ylab('Probabilidad de anotar')+
+  ggtitle('Visitante') + 
+  theme(plot.title = element_text(hjust = 0.5, size=20))
+dev.off()
+
+
+# GRAFICAMOS EL MAPA DE CALOR
+
+color <- colorRampPalette(c('black','limegreen'))
+color <-color(20)
+
+jpeg(file=":/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Paso/Proyecto/www/hm13-14.jpeg",width = 550, height = 450)
+levelplot(tabla[1:n-1,1:m-1]*100,col.regions= color,
+          main='Probabilidad del resultado final',
+          xlab='Goles local', ylab='Goles visitante')
+grid::grid.text('(%)', y=unit(0.93, "npc"), 
+                x=unit(0.94, "npc"))
+dev.off()
+#############################################################
+
+# CREAMOS LA TABLA DE CONTINGENCIA PARA TEMPORADA
+
+  # Primero creamos la tabla de probabilidades conjuntas
+
+goles.local <- T1415$FTHG
+goles.visitante <- T11415$FTAG 
+tabla <- table(goles.local,goles.visitante)
+total.goles <- sum(tabla)
+tabla <- round(tabla/total.goles,5)
+
+  # Agregamos las probabilidades marginales de ambas variables
+
+marginal.gl <- marginSums(tabla,1)
+
+tabla <- cbind(tabla,marginal.gl)
+
+marginal.gv <- marginSums(tabla,2)
+
+tabla <- rbind(tabla,marginal.gv)
+
+# GRAFICAMOS LAS PROBABILIDADES MARGINALES
+
+  # Probabilidad de anotar del equipo de casa 
+
+n = dim(tabla)[1] ; m = dim(tabla)[2]
+goles <- row.names(tabla)[1:n-1]
+prob <- marginal.gl
+df<-as.data.frame(cbind(goles,prob))
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/bpgl1415.jpeg",width = 550, height = 450)
+ggplot(df,aes(goles,prob))+geom_col(fill='blue')+
+  xlab('Goles') + ylab('Probabilidad de anotar')+
+  ggtitle('Local') + 
+  theme(plot.title = element_text(hjust = 0.5, size=20))
+dev.off()
+  
+  # Probabilidad de anotar del equipo visitante
+
+goles <- colnames(tabla)[1:m-1]
+prob <- marginal.gv[1:m-1]
+df <- as.data.frame(cbind(goles,prob))
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/bpgv1415.jpeg",width = 550, height = 450)
+ggplot(df)+geom_col(aes(goles,prob), fill='red')+
+  xlab('Goles') + ylab('Probabilidad de anotar')+
+  ggtitle('Visitante') + 
+  theme(plot.title = element_text(hjust = 0.5, size=20))
+dev.off()
+
+
+# GRAFICAMOS EL MAPA DE CALOR
+
+color <- colorRampPalette(c('black','limegreen'))
+color <-color(20)
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/hm14-15.jpeg",width = 550, height = 450)
+levelplot(tabla[1:n-1,1:m-1]*100,col.regions= color,
+          main='Probabilidad del resultado final',
+          xlab='Goles local', ylab='Goles visitante')
+grid::grid.text('(%)', y=unit(0.89, "npc"), 
+                x=unit(0.94, "npc"))
+dev.off()
+#############################################################
+
+# CREAMOS LA TABLA DE CONTINGENCIA PARA TEMPORADA
+
+  # Primero creamos la tabla de probabilidades conjuntas
+
+goles.local <- T1516$FTHG
+goles.visitante <- T11516$FTAG 
+tabla <- table(goles.local,goles.visitante)
+total.goles <- sum(tabla)
+tabla <- round(tabla/total.goles,5)
+
+  # Agregamos las probabilidades marginales de ambas variables
+
+marginal.gl <- marginSums(tabla,1)
+
+tabla <- cbind(tabla,marginal.gl)
+
+marginal.gv <- marginSums(tabla,2)
+
+tabla <- rbind(tabla,marginal.gv)
+
+# GRAFICAMOS LAS PROBABILIDADES MARGINALES
+
+  # Probabilidad de anotar del equipo de casa 
+
+n = dim(tabla)[1] ; m = dim(tabla)[2]
+goles <- row.names(tabla)[1:n-1]
+prob <- marginal.gl
+df<-as.data.frame(cbind(goles,prob))
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/bpgl1516.jpeg",width = 550, height = 450)
+ggplot(df,aes(goles,prob))+geom_col(fill='blue')+
+  xlab('Goles') + ylab('Probabilidad de anotar')+
+  ggtitle('Local') + 
+  theme(plot.title = element_text(hjust = 0.5, size=20))
+dev.off()
+ 
+   # Probabilidad de anotar del equipo visitante
+
+goles <- colnames(tabla)[1:m-1]
+prob <- marginal.gv[1:m-1]
+df <- as.data.frame(cbind(goles,prob))
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/bpgv1516.jpeg",width = 550, height = 450)
+ggplot(df)+geom_col(aes(goles,prob), fill='red')+
+  xlab('Goles') + ylab('Probabilidad de anotar')+
+  ggtitle('Visitante') + 
+  theme(plot.title = element_text(hjust = 0.5, size=20))
+dev.off()
+
+
+# GRAFICAMOS EL MAPA DE CALOR
+
+color <- colorRampPalette(c('black','limegreen'))
+color <-color(20)
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/hm15-16.jpeg",width = 550, height = 450)
+levelplot(tabla[1:n-1,1:m-1]*100,col.regions= color,
+          main='Probabilidad del resultado final',
+          xlab='Goles local', ylab='Goles visitante')
+grid::grid.text('(%)', y=unit(0.90, "npc"), 
+                x=unit(0.94, "npc"))
+dev.off()
+#############################################################
+
+# CREAMOS LA TABLA DE CONTINGENCIA PARA TEMPORADA
+
+  # Primero creamos la tabla de probabilidades conjuntas
+
+goles.local <- T1617$FTHG
+goles.visitante <- T1617$FTAG 
+tabla <- table(goles.local,goles.visitante)
+total.goles <- sum(tabla)
+tabla <- round(tabla/total.goles,5)
+
+  # Agregamos las probabilidades marginales de ambas variables
+
+marginal.gl <- marginSums(tabla,1)
+
+tabla <- cbind(tabla,marginal.gl)
+
+marginal.gv <- marginSums(tabla,2)
+
+tabla <- rbind(tabla,marginal.gv)
+
+# GRAFICAMOS LAS PROBABILIDADES MARGINALES
+
+  # Probabilidad de anotar del equipo de casa 
+
+n = dim(tabla)[1] ; m = dim(tabla)[2]
+goles <- row.names(tabla)[1:n-1]
+prob <- marginal.gl
+df<-as.data.frame(cbind(goles,prob))
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/bpgl1617.jpeg",width = 550, height = 450)
+ggplot(df,aes(goles,prob))+geom_col(fill='blue')+
+  xlab('Goles') + ylab('Probabilidad de anotar')+
+  ggtitle('Local') + 
+  theme(plot.title = element_text(hjust = 0.5, size=20))
+dev.off()
+  
+  # Probabilidad de anotar del equipo visitante
+
+goles <- colnames(tabla)[1:m-1]
+prob <- marginal.gv[1:m-1]
+df <- as.data.frame(cbind(goles,prob))
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/bpgv1617.jpeg",width = 550, height = 450)
+ggplot(df)+geom_col(aes(goles,prob), fill='red')+
+  xlab('Goles') + ylab('Probabilidad de anotar')+
+  ggtitle('Visitante') + 
+  theme(plot.title = element_text(hjust = 0.5, size=20))
+dev.off()
+
+
+# GRAFICAMOS EL MAPA DE CALOR
+
+color <- colorRampPalette(c('black','limegreen'))
+color <-color(20)
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/hm16-17.jpeg",width = 550, height = 450)
+levelplot(tabla[1:n-1,1:m-1]*100,col.regions= color,
+          main='Probabilidad del resultado final',
+          xlab='Goles local', ylab='Goles visitante')
+grid::grid.text('(%)', y=unit(0.92, "npc"), 
+                x=unit(0.89, "npc"))
+dev.off()
+#############################################################
+
+# CREAMOS LA TABLA DE CONTINGENCIA PARA TEMPORADA
+
+  # Primero creamos la tabla de probabilidades conjuntas
+
+goles.local <- T1718$FTHG
+goles.visitante <- T1718$FTAG 
+tabla <- table(goles.local,goles.visitante)
+total.goles <- sum(tabla)
+tabla <- round(tabla/total.goles,5)
+
+  # Agregamos las probabilidades marginales de ambas variables
+
+marginal.gl <- marginSums(tabla,1)
+
+tabla <- cbind(tabla,marginal.gl)
+
+marginal.gv <- marginSums(tabla,2)
+
+tabla <- rbind(tabla,marginal.gv)
+
+# GRAFICAMOS LAS PROBABILIDADES MARGINALES
+
+  # Probabilidad de anotar del equipo de casa 
+
+n = dim(tabla)[1] ; m = dim(tabla)[2]
+goles <- row.names(tabla)[1:n-1]
+prob <- marginal.gl
+df<-as.data.frame(cbind(goles,prob))
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/bpgl1718.jpeg",width = 550, height = 450)
+ggplot(df,aes(goles,prob))+geom_col(fill='blue')+
+  xlab('Goles') + ylab('Probabilidad de anotar')+
+  ggtitle('Local') + 
+  theme(plot.title = element_text(hjust = 0.5, size=20))
+dev.off()
+  
+  # Probabilidad de anotar del equipo visitante
+
+goles <- colnames(tabla)[1:m-1]
+prob <- marginal.gv[1:m-1]
+df <- as.data.frame(cbind(goles,prob))
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/bpgv1718.jpeg",width = 550, height = 450)
+ggplot(df)+geom_col(aes(goles,prob), fill='red')+
+  xlab('Goles') + ylab('Probabilidad de anotar')+
+  ggtitle('Visitante') + 
+  theme(plot.title = element_text(hjust = 0.5, size=20))
+dev.off()
+
+
+# GRAFICAMOS EL MAPA DE CALOR
+
+color <- colorRampPalette(c('black','limegreen'))
+color <-color(20)
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/hm17-18.jpeg",width = 550, height = 450)
+levelplot(tabla[1:n-1,1:m-1]*100,col.regions= color,
+          main='Probabilidad del resultado final',
+          xlab='Goles local', ylab='Goles visitante')
+grid::grid.text('(%)', y=unit(0.92, "npc"), 
+                x=unit(0.89, "npc"))
+dev.off()
+#############################################################
+
+# CREAMOS LA TABLA DE CONTINGENCIA PARA TEMPORADA
+
+  # Primero creamos la tabla de probabilidades conjuntas
+
+goles.local <- T1819$FTHG
+goles.visitante <- T1819$FTAG 
+tabla <- table(goles.local,goles.visitante)
+total.goles <- sum(tabla)
+tabla <- round(tabla/total.goles,5)
+
+  # Agregamos las probabilidades marginales de ambas variables
+
+marginal.gl <- marginSums(tabla,1)
+
+tabla <- cbind(tabla,marginal.gl)
+
+marginal.gv <- marginSums(tabla,2)
+
+tabla <- rbind(tabla,marginal.gv)
+
+# GRAFICAMOS LAS PROBABILIDADES MARGINALES
+
+  # Probabilidad de anotar del equipo de casa 
+
+n = dim(tabla)[1] ; m = dim(tabla)[2]
+goles <- row.names(tabla)[1:n-1]
+prob <- marginal.gl
+df<-as.data.frame(cbind(goles,prob))
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/bpgl1819.jpeg",width = 550, height = 450)
+ggplot(df,aes(goles,prob))+geom_col(fill='blue')+
+  xlab('Goles') + ylab('Probabilidad de anotar')+
+  ggtitle('Local') + 
+  theme(plot.title = element_text(hjust = 0.5, size=20))
+dev.off()
+  
+  # Probabilidad de anotar del equipo visitante
+
+goles <- colnames(tabla)[1:m-1]
+prob <- marginal.gv[1:m-1]
+df <- as.data.frame(cbind(goles,prob))
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/bpgv1819.jpeg",width = 550, height = 450)
+ggplot(df)+geom_col(aes(goles,prob), fill='red')+
+  xlab('Goles') + ylab('Probabilidad de anotar')+
+  ggtitle('Visitante') + 
+  theme(plot.title = element_text(hjust = 0.5, size=20))
+dev.off()
+
+
+# GRAFICAMOS EL MAPA DE CALOR
+
+color <- colorRampPalette(c('black','limegreen'))
+color <-color(20)
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/hm18-19.jpeg",width = 550, height = 450)
+levelplot(tabla[1:n-1,1:m-1]*100,col.regions= color,
+          main='Probabilidad del resultado final',
+          xlab='Goles local', ylab='Goles visitante')
+grid::grid.text('(%)', y=unit(0.93, "npc"), 
+                x=unit(0.86, "npc"))
+dev.off()
+#############################################################
+
+# CREAMOS LA TABLA DE CONTINGENCIA PARA TEMPORADA
+
+  # Primero creamos la tabla de probabilidades conjuntas
+
+goles.local <- T1920$FTHG
+goles.visitante <- T1920$FTAG 
+tabla <- table(goles.local,goles.visitante)
+total.goles <- sum(tabla)
+tabla <- round(tabla/total.goles,5)
+
+  # Agregamos las probabilidades marginales de ambas variables
+
+marginal.gl <- marginSums(tabla,1)
+
+tabla <- cbind(tabla,marginal.gl)
+
+marginal.gv <- marginSums(tabla,2)
+
+tabla <- rbind(tabla,marginal.gv)
+
+# GRAFICAMOS LAS PROBABILIDADES MARGINALES
+
+  # Probabilidad de anotar del equipo de casa 
+
+n = dim(tabla)[1] ; m = dim(tabla)[2]
+goles <- row.names(tabla)[1:n-1]
+prob <- marginal.gl
+df<-as.data.frame(cbind(goles,prob))
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/bpgl1920.jpeg",width = 550, height = 450)
+ggplot(df,aes(goles,prob))+geom_col(fill='blue')+
+  xlab('Goles') + ylab('Probabilidad de anotar')+
+  ggtitle('Local') + 
+  theme(plot.title = element_text(hjust = 0.5, size=20))
+dev.off()
+  
+  # Probabilidad de anotar del equipo visitante
+
+goles <- colnames(tabla)[1:m-1]
+prob <- marginal.gv[1:m-1]
+df <- as.data.frame(cbind(goles,prob))
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/bpgv1920.jpeg",width = 550, height = 450)
+ggplot(df)+geom_col(aes(goles,prob), fill='red')+
+  xlab('Goles') + ylab('Probabilidad de anotar')+
+  ggtitle('Visitante') + 
+  theme(plot.title = element_text(hjust = 0.5, size=20))
+dev.off()
+
+
+# GRAFICAMOS EL MAPA DE CALOR
+
+color <- colorRampPalette(c('black','limegreen'))
+color <-color(20)
+
+jpeg(file="d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto/www/hm19-20.jpeg",width = 550, height = 450)
+levelplot(tabla[1:n-1,1:m-1]*100,col.regions= color,
+          main='Probabilidad del resultado final',
+          xlab='Goles local', ylab='Goles visitante')
+grid::grid.text('(%)', y=unit(0.92, "npc"), 
+                x=unit(0.90, "npc"))
+dev.off()
 
 
 ## Planteamiento de las hipótesis
