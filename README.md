@@ -338,14 +338,14 @@ Si hacemos las t test de una cola podemos ver que hay significancia, incluso si 
                         tan pequeños que ya no se realizo la prueba de múltiples comparaciones. Incluso con un test de Bonferroni seguiría siendo significativo"
                         ),
                       br(),
-                      p("Como equipo atribuimos que el hecho de que el equipo que juega como local tenga aproximadamente 1.6 veces mas chances de ganar, 
+                      p("Como equipo atribuimos que el hecho de que el equipo que juega como local tenga aproximadamente 1.6 veces más oportunidades de ganar, 
                         se puede atribuir a factores relacionados a la porra y número de seguidores que puede tener un equipo al jugar dentro de su propio estadio.
                         Claro que para afirmar tal aseveración necesitaríamos analizar el número de aficionados por equipo en cada partido."
                         ),
                       br(),
 
-                      p("Por último quisimos analizar que rol cometío mas faltas a lo largo de todos los partidos de las 9 temporadas analizadas. El grafico que se muestra
-                        a continuación mas la prueba estadistica t-student de dos colas comprueban que no hay diferencias significativas entre el número de faltas cometidas
+                      p("Por último quisimos analizar qué rol cometío más faltas a lo largo de todos los partidos de las 9 temporadas analizadas. El gráfico que se muestra
+                        a continuación más la prueba estadistica t-student de dos colas comprueban que no hay diferencias significativas entre el número de faltas cometidas
                         y el rol que fungen los equipos"
                         ),
                       br(),
