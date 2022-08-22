@@ -1,6 +1,7 @@
-# PROYECTO 
+## PROYECTO EQUIPO 6
+####################
+## versión 5 (20220821)
 
-#EQUIPO 6
 ## Integrantes: 
 ## Liliana Inés Árciga Moreno
 ## Alfredo Cuevas Sánchez
@@ -8,19 +9,25 @@
 ## José María Montes Montiel
 ## Rodrigo Garmendia
 
+## app.R ##
 
-## Iniciamos cargando las librerías necesarias para crear el dashboard
+## Dashboard para el data set 'match.data'
+
+
+#install.packages("shinythemes")
+#install.packages("shinydashboard")
 library(shinythemes)
 library(shiny)
 library(shinydashboard)
 library(fontawesome)
 
-## Seleccionamis el directorio de trabajo en donde se almacenan los datos del archivo match.data.cvs
-setwd("~/Desktop/Proyecto/datos")
-getwd()
+#setwd("d:/Cursos/BEDU/Fase 2/Sesión 8 -Dashboards con Shiny - Entorno GUI/Proyecto")
+#getwd()
 match.data <- read.csv("match.data.csv")
 
-## Creamos el ambiente del ui para el dashboard
+
+# Esta parte es el análogo al ui.R
+##################################
 
 temps <- c("10-11","11-12","12-13","13-14","14-15","15-16","16-17","17-18","18-19","19-20")
 
@@ -41,10 +48,9 @@ ui <-
                          image = ("200w.gif")) ,        
         sidebarMenu(
           menuItem("Histograma", tabName = "Dashboard", icon = icon("chart-column")),
-          menuItem("Mapas y Graficas", tabName = "graphs", icon = icon("border-all","regular")),
+          menuItem("Mapas y Graficas", tabName = "graphs", icon = icon("border-all")),
           menuItem("Tabla de Datos", tabName = "data_table", icon = icon("th", verify_fa = FALSE)),
           menuItem("Imágenes", tabName = "img", icon = icon("file-photo-o", verify_fa = FALSE) ),
-#          menuItem("Hipótesis", tabName = "hipotesis", icon = icon("futbol-o fa-spin", verify_fa = FALSE) )          
           menuItem("Hipótesis", tabName = "hipotesis", icon = icon("lightbulb-o", verify_fa = FALSE) )          
           
         )
@@ -80,7 +86,8 @@ ui <-
                       titlePanel(h4("Mapas de calor por temporada")),
                       selectInput("hm", label = tags$p(fa("futbol", fill = "green"), 
                                                      "Selecciona la temporada"),
-                                  choices = temps),
+                                  choices = temps,
+                                  width = 200),
                       imageOutput("heatmap"),
                     
                       br(), 
@@ -88,7 +95,8 @@ ui <-
                     
                       selectInput("br", label = tags$p(fa("futbol", fill = "green"),
                                                      "Selecciona equipo"),                                  
-                                choices = c('Local','Visitante')),
+                                choices = c('Local','Visitante'),
+                                width = 200),
                       imageOutput("barplot"), 
                       
                       width = 12
@@ -118,11 +126,11 @@ ui <-
                     titlePanel(h3("Imágenes de Secuencia de Juegos (Momios)")),
                     
                     box(titlePanel(h4(icon("futbol", verify_fa = FALSE, fill = "green"), "Momios Máximos")),
-                      img( src = "MomiosMáximos.png", 
-                           height = 350, width = 580), width = 12),
+                      img( src = "MomiosMaximos.png", 
+                           height = 320, width = 600), width = 12),
                     box(titlePanel(h4(icon("futbol", verify_fa = FALSE), "Momios Promedio")),
                       img( src = "MomiosPromedio.png",
-                           height = 350, width = 580), width = 12)  
+                           height = 320, width = 580), width = 12)  
                   )
           ),
   
@@ -146,7 +154,7 @@ ui <-
                     p("Mediante el valor de probabilidad o pvalue que es menor a 0.05 podemos afirmar que el equipo local acierta mayor 
                       cantidad de goles que el equipo visitante. No obstante, quisimos confirmar que ese aumento en el número de goles 
                       se viera reflejado totalmente en victorias. Para lograr este objetivo mediante los datos de cada una de las temporadas
-                      extrajimos el número de partidos empatados, ganados y perdidos por los locales hubo."
+                      extrajimos el número de partidos empatados, ganados y perdidos por los locales."
                       ),
                     br(),
                     #Foto2
@@ -187,6 +195,7 @@ ui <-
 
 
 # De aquí en adelante es la parte que corresponde al server
+############################################################
 
 server <- function(input, output, session) {
   library(ggplot2)
