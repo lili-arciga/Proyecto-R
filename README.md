@@ -993,7 +993,7 @@ Si hacemos las t test de una cola podemos ver que hay significancia, incluso si 
                       p("Mediante el valor de probabilidad o pvalue que es menor a 0.05 podemos afirmar que el equipo local acierta mayor 
                         cantidad de goles que el equipo visitante. No obstante, quisimos confirmar que ese aumento en el número de goles 
                         se viera reflejado totalmente en victorias. Para lograr este objetivo mediante los datos de cada una de las temporadas
-                        extrajimos el número de partidos empatados, ganados y perdidos por los locales hubo."
+                        extrajimos el número de partidos empatados, ganados y perdidos por los locales."
                         ),
                       br(),
                       #Foto2
@@ -1092,4 +1092,4 @@ Si hacemos las t test de una cola podemos ver que hay significancia, incluso si 
 
     shinyApp(ui, server)
 
-##### Haz clic [aquí](https://qh8b71-liliana0in0s-arciga0moreno.shinyapps.io/ProyectoEquipo06/?_ga=2.114321295.92823842.1661032228-591125681.1661032228) para acceder al enlace donde se encuentra el dashboard.
+##### Haz clic [aquí](https://vuksfo-alfredo-cuevas.shinyapps.io/Proyecto_Dashboard_Grupo6/) para acceder al enlace donde se encuentra el dashboard.
